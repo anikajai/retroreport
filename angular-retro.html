@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+<script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+<script language="javascript">
+function _submit(form) {
+					var keyToSearch = document.getElementById("searchKey").value;
+					window.alert(keyToSearch);
+					var client = algoliasearch('SIZJY7AJ5K', 'ae8c3d9edcd1dd5ae5a6f5db0a69c668');
+					var index = client.initIndex('Oct29_index');
+					index.setSettings({
+						   attributesToRetrieve: [
+							'content'
+							],
+							'attributesToHighlight': [
+							'content'
+						  ],
+						  'hitsPerPage': 20,
+						  'highlightPreTag': '<strong>',
+						  'highlightPostTag': '</strong>'
+						}, function(err, content) {
+						  console.log(content);
+						});
+						
+					index.search(keyToSearch, function(err, content) {
+						  console.log(content.hits);
+						  document.getElementById("matchResult").innerHTML = "<u>Transcript</u><br><br>" + content.hits[0].content;
+						  var hVal = content.hits[0]._highlightResult.content.value;
+						  var startInd = hVal.indexOf("<strong>");
+						  var endInd = hVal.lastIndexOf("</strong>");
+						  var highlight = hVal.substring(startInd, endInd+9);
+						  document.getElementById("highlightedResult").innerHTML = "<u>Matched Result</u><br><br>..." + highlight + "...";
+						});
+				}
+</script>
+<body>
+<div class="needs-js absoluteTK cf bb b--light-gray bg-near-white child left-0 w-100 z-5">
+<fieldset class="bn ma0 pa0"><label id="search_label" class="clip" for="search">Search</label>
+<br>
+<form id="searchForm" name="searchForm" method="POST">
+	<span > 
+		<input id='searchKey' name="key" type="text" maxlength="100" size="35" class="needs-js pv3 bn dib f2 input-reset lh-solid mt0-ns pv2 tc w-100 color-f searchinput" aria-labelledby="search_label" autocomplete="off"/>
+		</span>
+		<input type="button" name="submit" value="Submit" onClick="_submit(this.form);"/>
+		</fieldset>
+</form>
+</div>
+<br>
+<div id= "highlightedResult">
+</div>
+<br>
+<div id= "matchResult">
+</div>
+
+		
+ <!-- <div ng-app="">
+<p>Search for : <input type="text" ng-model="keyword" placeholder="type something..." name="searchType">
+			<span class="input-group-btn buttonsCustom">
+								<button id="submit" type="button" class="btn btn-default myButton" ng-click="_submit()">
+								    <span class="glyphicon glyphicon-search">Submit</span>
+								</button>
+		</span>
+							</p> <h1>Hello {{name}}</h1></div>'attributesToHighlight': [
+							'content'
+						  ],
+						  -->
+ 
+
+</body>
+</html>
