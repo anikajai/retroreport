@@ -1,3 +1,3 @@
 # PfDK
 
-See Module "Readme" file
+See Modules "Readme.md" file
