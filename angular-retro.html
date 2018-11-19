@@ -48,8 +48,16 @@ function _submit(form) {
 								item += elem._highlightResult.title.value + " ... ";
 							}
 							if (elem._highlightResult.tags.matchLevel != "none") {
-								
-								item += elem._highlightResult.tags.value + " ... ";
+								var str = elem._highlightResult.tags.value;
+								var startInd = str.indexOf("<strong>");
+								while (startInd != -1) {
+									var endInd = str.indexOf("</strong>", startInd);
+									item+= str.substring(startInd, endInd+9) + " ";
+									str = str.substring(endInd+9);
+									startInd = str.indexOf("<strong>");
+								}
+								item += "... ";
+							
 							}
 							item += "<br><strong>Abstract:</strong> " + elem.abstract + "<br><br><h3><strong>Report:</strong> <a href='http://192.168.1.138:3000/" + elem.videoID +"' target='_blank' >" + elem.title + "</a></h3>";
 							list += item +"</li><br><br>";
