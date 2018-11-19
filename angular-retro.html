@@ -1,19 +1,26 @@
 <!DOCTYPE html>
 <html lang="en-US">
+<header>
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
 <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
 <script language="javascript">
 function _submit(form) {
 					var keyToSearch = document.getElementById("searchKey").value;
-					window.alert(keyToSearch);
-					var client = algoliasearch('SIZJY7AJ5K', 'ae8c3d9edcd1dd5ae5a6f5db0a69c668');
-					var index = client.initIndex('Oct29_index');
+					//window.alert(keyToSearch);
+					var client = algoliasearch('M54GQ5QA25', 'c7f4f469d460e8168e7012952d335a8b');
+					var index = client.initIndex('predemo_usc_index');
 					index.setSettings({
 						   attributesToRetrieve: [
-							'content'
+							'abstract',
+							'tags',
+							'title',
+							'videoID',
+							'date'
 							],
 							'attributesToHighlight': [
-							'content'
+							'abstract',
+							'tags',
+							'title'
 						  ],
 						  'hitsPerPage': 20,
 						  'highlightPreTag': '<strong>',
@@ -23,34 +30,64 @@ function _submit(form) {
 						});
 						
 					index.search(keyToSearch, function(err, content) {
-						  console.log(content.hits);
-						  document.getElementById("matchResult").innerHTML = "<u>Transcript</u><br><br>" + content.hits[0].content;
-						  var hVal = content.hits[0]._highlightResult.content.value;
-						  var startInd = hVal.indexOf("<strong>");
-						  var endInd = hVal.lastIndexOf("</strong>");
-						  var highlight = hVal.substring(startInd, endInd+9);
-						  document.getElementById("highlightedResult").innerHTML = "<u>Matched Result</u><br><br>..." + highlight + "...";
+					//window.alert("hi")
+						  console.log(content);
+						  var resultsCount = content.nbhits + " Results found<br>"
+						  var list = "<ul style='list-style-type:disc'>"
+						  for (var i=0;i < content.hits.length;i++) {
+							list += "<li>";
+							var elem = content.hits[i];
+							//window.alert("date is: " + elem.date);	
+							var item = "<strong>Date:</strong> "+ elem.date +"<br><strong>Match Highlights:</strong> ";
+							//window.alert(elem._highlightResult.abstract.matchLevel)
+							if (elem._highlightResult.abstract.matchLevel != "none") {
+								item += elem._highlightResult.abstract.value + " ... ";
+							}
+							if (elem._highlightResult.title.matchLevel != "none") {
+								item += elem._highlightResult.title.value + " ... ";
+							}
+							if (elem._highlightResult.tags.matchLevel != "none") {
+								
+								item += elem._highlightResult.tags.value + " ... ";
+							}
+							item += "<br><strong>Abstract:</strong> " + elem.abstract + "<br><br><h3><strong>Report:</strong> <a href='http://192.168.1.138:3000/" + elem.videoID +"' target='_blank' >" + elem.title + "</a></h3>";
+							list += item +"</li><br><br>";
+						  }
+						  list += "<ul>"
+						  document.getElementById("matchResult").innerHTML = list;//"<u>Transcript</u><br><br>" + content.hits[0].title;
+						  //var hVal = content.hits[0]._highlightResult.title.value;
+						  
+						  //var startInd = hVal.indexOf("<strong>");
+						  //var endInd = hVal.lastIndexOf("</strong>");
+						  //var highlight = hVal;//.substring(startInd, endInd+9);
+						  //document.getElementById("highlightedResult").innerHTML = "<u>Matched Result</u><br><br>..." + highlight + "...";
 						});
 				}
 </script>
+</header>
 <body>
 <div class="needs-js absoluteTK cf bb b--light-gray bg-near-white child left-0 w-100 z-5">
-<fieldset class="bn ma0 pa0"><label id="search_label" class="clip" for="search">Search</label>
+<fieldset class="bn ma0 pa0"><label id="search_label" class="clip" for="search">
+<h1><img src="RetroSign.png"/></h1>
+Search</label>
 <br>
 <form id="searchForm" name="searchForm" method="POST">
 	<span > 
 		<input id='searchKey' name="key" type="text" maxlength="100" size="35" class="needs-js pv3 bn dib f2 input-reset lh-solid mt0-ns pv2 tc w-100 color-f searchinput" aria-labelledby="search_label" autocomplete="off"/>
 		</span>
 		<input type="button" name="submit" value="Submit" onClick="_submit(this.form);"/>
-		</fieldset>
+		
+		<br>
+		<br>
+		<div id= "matchResult">
+</div>
 </form>
+</fieldset>
 </div>
 <br>
 <div id= "highlightedResult">
 </div>
 <br>
-<div id= "matchResult">
-</div>
 
 		
  <!-- <div ng-app="">
