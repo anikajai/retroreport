@@ -32,8 +32,9 @@ function _submit(form) {
 					index.search(keyToSearch, function(err, content) {
 					//window.alert("hi")
 						  console.log(content);
-						  var resultsCount = content.nbhits + " Results found<br>"
-						  var list = "<ul style='list-style-type:disc'>"
+						  //window.alert("count" + content.nbHits);
+						  var resultsCount = "<h6>"+ content.nbHits + " Results found</h6>"
+						  var list = resultsCount + "<ul style='list-style-type:disc'>"
 						  for (var i=0;i < content.hits.length;i++) {
 							list += "<li>";
 							var elem = content.hits[i];
@@ -67,9 +68,7 @@ function _submit(form) {
 </header>
 <body>
 <div class="needs-js absoluteTK cf bb b--light-gray bg-near-white child left-0 w-100 z-5">
-<fieldset class="bn ma0 pa0"><label id="search_label" class="clip" for="search">
-<h1><img src="RetroSign.png"/></h1>
-Search</label>
+<fieldset class="bn ma0 pa0"><label id="search_label" class="clip" for="search"> <h1><img src="RetroSign.png"/></h1><i>Search</i></label>
 <br>
 <form id="searchForm" name="searchForm" method="POST">
 	<span > 
