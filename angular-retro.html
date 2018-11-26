@@ -35,19 +35,78 @@ function _submit(form) {
 						  //window.alert("count" + content.nbHits);
 						  var resultsCount = "<h6>"+ content.nbHits + " Results found</h6>"
 						  var list = resultsCount + "<ul style='list-style-type:disc'>"
+						  var myMap = new Map();
+						  var myArr = [];
 						  for (var i=0;i < content.hits.length;i++) {
-							list += "<li>";
 							var elem = content.hits[i];
+							myArr.push(Date.parse(elem.date));
+							myMap.set(Date.parse(elem.date), elem);
+						  }
+						  myArr.sort();
+						  myArr.reverse();
+						  window.alert(myArr);
+						  for (var i=0;i < myArr.length;i++) {
+							list += "<li>";
+							var elem = myMap.get(myArr[i]);
 							//window.alert("date is: " + elem.date);	
-							var item = "<strong>Date:</strong> "+ elem.date +"<br><strong>Match Highlights:</strong> ";
+							var item = "<strong>Date:</strong> "+ elem.date;
+							//window.alert());
+							var boolDone = false;
 							//window.alert(elem._highlightResult.abstract.matchLevel)
 							if (elem._highlightResult.abstract.matchLevel != "none") {
-								item += elem._highlightResult.abstract.value + " ... ";
+								item += "<br><strong>Match Highlights:</strong> ";
+								boolDone = true;
+								//item += elem._highlightResult.abstract.value + " ... ";
+								var str = elem._highlightResult.abstract.value;
+								var startInd = str.indexOf("<strong>");
+								while (startInd != -1) {
+									var endInd = str.indexOf("</strong>", startInd);
+									
+									var borderStartInd = str.lastIndexOf(" ", startInd-9);
+									var borderEndInd = str.indexOf(" ", endInd+10);
+									if (borderStartInd== -1) {
+										borderStartInd = startInd;
+									}
+									//window.alert(endInd + " " + borderEndInd);
+									if (borderEndInd== -1) {
+										borderEndInd = endInd+9;
+									}
+									//window.alert(str.substring(borderStartInd, borderEndInd));
+									//item+= "..." + str.substring(startInd, endInd+9);
+									item+= "..." + str.substring(borderStartInd, borderEndInd);
+									str = str.substring(endInd+9);
+									startInd = str.indexOf("<strong>");
+								}
+								item += "...";
 							}
 							if (elem._highlightResult.title.matchLevel != "none") {
-								item += elem._highlightResult.title.value + " ... ";
+								if (boolDone == false) {
+									item += "<br><strong>Match Highlights:</strong> ";
+									boolDone = true;
+								}
+								//item += elem._highlightResult.title.value + " ...";
+								var str = elem._highlightResult.title.value;
+								var startInd = str.indexOf("<strong>");
+								while (startInd != -1) {
+									var endInd = str.indexOf("</strong>", startInd);
+									var borderStartInd = str.lastIndexOf(" ", startInd-9);
+									var borderEndInd = str.indexOf(" ", endInd+10);
+									if (borderStartInd== -1) {
+										borderStartInd = startInd;
+									}
+									if (borderEndInd== -1) {
+										borderEndInd = endInd+9;
+									}
+									//item+= "..." + str.substring(startInd, endInd+9);
+									item+= "..." + str.substring(borderStartInd, borderEndInd);
+									str = str.substring(endInd+9);
+									startInd = str.indexOf("<strong>");
+								}
+								item += "...";
 							}
 							if (elem._highlightResult.tags.matchLevel != "none") {
+								item += "<br><strong>Tag Match:</strong> ";
+								boolDone = true;
 								var str = elem._highlightResult.tags.value;
 								var startInd = str.indexOf("<strong>");
 								while (startInd != -1) {
@@ -56,7 +115,7 @@ function _submit(form) {
 									str = str.substring(endInd+9);
 									startInd = str.indexOf("<strong>");
 								}
-								item += "... ";
+								item += "...";
 							
 							}
 							item += "<br><strong>Abstract:</strong> " + elem.abstract + "<br><br><h3><strong>Report:</strong> <a href='http://192.168.1.138:3000/" + elem.videoID +"' target='_blank' >" + elem.title + "</a></h3>";
